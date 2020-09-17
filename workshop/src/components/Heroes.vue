@@ -1,53 +1,34 @@
 <template>
   <div>
     <div class="section content-title-group">
-      <h2 class="title">Hero</h2>
+      <h2 class="title">Heroes</h2>
       <div class="columns is-multiline is-variable">
-        <div class="column is-8">
-          <div class="card edit-detail" v-if="hero && hero.id">
-            <header class="card-header">
-              <p class="card-header-title">{{ fullName }}</p>
-            </header>
-            <div class="card-content">
-              <div class="content">
-                <div class="field">
-                  <label class="label" for="id">id</label>
-                  <label class="input" name="id" readonly>{{hero.id}}</label>
+        <div class="column is-8" v-if="heroes">
+          <ul v-if="!isHeroSelected">
+            <li v-for="hero in heroes" :key="hero.id">
+              <div class="card">
+                <div class="card-content">
+                  <div class="content">
+                    <div :key="hero.name" class="name">{{ hero.firstName }} {{ hero.lastName }}</div>
+                    <div class="description">{{ hero.description }}</div>
+                  </div>
                 </div>
-                <div class="field">
-                  <label class="label" for="firstName">first name</label>
-                  <input class="input" name="firstName" type="text" v-model="hero.firstName" />
-                </div>
-                <div class="field">
-                  <label class="label" for="lastName">last name</label>
-                  <input class="input" name="lastName" v-model="hero.lastName" />
-                </div>
-                <div class="field">
-                  <label class="label" for="description">description</label>
-                  <input class="input" name="description" type="text" v-model="hero.description" />
-                </div>
-                <div class="field">
-                  <label class="label" for="capeCounter">cape counter</label>
-                  <input class="input" name="capeCounter" type="number" v-model="hero.capeCounter" />
-                </div>
-                <div class="field">
-                  <label class="label" for="capeMessage">cape message</label>
-                  <label class="input" name="capeMessage">{{capeMessage}}</label>
-                </div>
+                <footer class="card-footer">
+                  <button class="link card-footer-item save-button" @click="selectHero(hero)">
+                    <i class="fas fa-check"></i>
+                    <span>Select</span>
+                  </button>
+                </footer>
               </div>
-            </div>
-            <footer class="card-footer">
-              <button class="link card-footer-item cancel-button" @click="cancelHero()">
-                <i class="fas fa-undo"></i>
-                <span>Cancel</span>
-              </button>
-              <button class="link card-footer-item save-button" @click="saveHero()">
-                <i class="fas fa-save"></i>
-                <span>Save</span>
-              </button>
-            </footer>
-          </div>
-          <div class="notification is-info" v-show="message">{{message}}</div>
+            </li>
+          </ul>
+          <HeroDetail
+            :hero="selectedHero"
+            @save="saveHero"
+            @cancel="unselectHero"
+            v-if="isHeroSelected"
+          />
+          <div class="notification is-info" v-show="message">{{ message }}</div>
         </div>
       </div>
     </div>
@@ -55,74 +36,74 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import { Hero } from '../models/hero';
+import { Component, Vue } from 'vue-property-decorator';
+import { Hero } from '@/models/hero';
+import HeroDetail from '@/components/HeroDetail.vue';
 
-@Component
+@Component({
+  components: { HeroDetail },
+})
+
 export default class Heroes extends Vue {
-  private hero: Hero = {} as Hero;
+  public heroes: Hero[] = [];
+  public selectedHero: Hero = {} as Hero;
   private message = '';
-  private capeMessage = '';
 
-  get fullName(): string {
-    return `${this.hero.firstName} ${this.hero.lastName}`;
+  public created() {
+    this.loadHeroes();
   }
 
-  created() {
-    this.loadHero();
+  get isHeroSelected(): boolean {
+    return !!this.selectedHero.id;
   }
 
-  @Watch('hero.capeCounter')
-  handler(newValue: string, oldValue: string) {
-    this.handleTheCapes(parseInt(newValue, 10));
-  }
-
-  cancelHero() {
-    this.loadHero();
-  }
-
-  async loadHero() {
-    this.hero = {} as Hero;
-    this.message = 'getting the hero, please be patient';
-    this.hero = await this.getHero();
+  async loadHeroes() {
+    this.heroes = [];
+    this.message = 'getting the heroes, please be patient';
+    this.heroes = await this.getHeroes();
     this.message = '';
   }
 
-  handleTheCapes(newValue: number) {
-    switch (newValue) {
-      case 0:
-        this.capeMessage = 'Where is my cape?';
-        break;
-      case 1:
-        this.capeMessage = 'One is all I need';
-        break;
-      case 2:
-        this.capeMessage = 'Alway have a spare';
-        break;
-      default:
-        this.capeMessage = 'You can never have enough capes';
-        break;
-    }
+  public selectHero(hero: Hero) {
+    this.selectedHero = hero;
   }
-
-  saveHero() {
-    alert('Save!');
-  }
-
-  async getHero(): Promise<Hero> {
-    const hero = {
-      id: 20,
-      firstName: 'Ines',
-      lastName: 'Santamaria',
-      capeCounter: 1,
-      description: 'the cat whisperer',
-    } as Hero;
+  async getHeroes(): Promise<Hero[]> {
+    const heroes = [
+      {
+        id: 10,
+        firstName: 'Ella',
+        lastName: 'Papa',
+        description: 'fashionista',
+      },
+      {
+        id: 20,
+        firstName: 'Madelyn',
+        lastName: 'Papa',
+        description: 'the cat whisperer',
+      },
+      {
+        id: 30,
+        firstName: 'Haley',
+        lastName: 'Papa',
+        description: 'pen wielder',
+      },
+    ] as Hero[];
     return new Promise((resolve) => {
-      setTimeout(() => resolve(hero), 2000);
+      setTimeout(() => resolve(heroes), 500);
     });
+  }
+
+  saveHero(hero: Hero) {
+    this.selectedHero = {} as Hero;
+    const index = this.heroes.findIndex((h) => h.id === hero.id);
+    this.heroes.splice(index, 1, hero);
+    this.heroes = [...this.heroes];
+  }
+
+  unselectHero() {
+    this.selectedHero = {} as Hero;
   }
 }
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

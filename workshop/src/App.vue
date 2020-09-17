@@ -1,18 +1,18 @@
 <template>
- <div id="app">
+  <div id="app">
     <h1>Data Binding</h1>
-    <Heroes/>
+    <Heroes />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import Heroes from "@/components/Heroes.vue";
+import { Component, Vue } from 'vue-property-decorator';
+import Heroes from '@/components/Heroes.vue';
 
 @Component({
   components: {
-    Heroes
-  }
+    Heroes,
+  },
 })
 export default class App extends Vue {}
 </script>
@@ -22,7 +22,7 @@ export default class App extends Vue {}
 #app {
   margin: 36px 48px;
   .title {
-    margin-bottom: 24px
+    margin-bottom: 24px;
   }
 }
 </style>
