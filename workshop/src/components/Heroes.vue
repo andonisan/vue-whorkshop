@@ -1,13 +1,17 @@
 <template>
   <div>
     <h2>Hero</h2>
-    <input v-model="hero.name" type="text" @keyup.enter="upperCaseTheName" />
-    <p>Hello {{ hero.name }}.</p>
-    <p>Your id is {{ hero.id }} and your description is "{{ hero.description }}"</p>
-    <button @click="reverseName">Reverse</button>
+    <ul>
+      <li
+        v-for="hero in heroes"
+        :key="hero.id"
+        @click="selectHero(hero)"
+        :class="{highlight: selectedHero===hero}"
+      >{{ hero.name }}</li>
+    </ul>
+    <div v-if="selectedHero.name">You selected {{ selectedHero.name }}</div>
   </div>
 </template>
-
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
@@ -15,26 +19,31 @@ import { Hero } from '../models/hero';
 
 @Component
 export default class Heroes extends Vue {
-  private hero: Hero;
+  private heroes: Hero[];
+  public selectedHero: Hero = {} as Hero;
 
   constructor() {
     super();
-    this.hero = {
-      id: 101,
-      name: 'Batman',
-      description: 'el hombre murcielago',
-    };
+    this.heroes = [
+      { id: 10, name: 'Batman', description: '' },
+      { id: 20, name: 'Superman', description: '' },
+      { id: 30, name: 'Ironman', description: '' },
+    ];
   }
-
-  public reverseName(): void {
-    this.hero.name = [...this.hero.name].reverse().join('');
-  }
-
-  private upperCaseTheName(): void {
-    this.hero.name = this.hero.name.toUpperCase();
+  selectHero(hero: Hero) {
+    this.selectedHero = hero;
   }
 }
 </script>
 
 <style scoped lang="scss">
+li {
+  list-style: none;
+  width: 200px;
+  cursor: pointer;
+
+  .highlight {
+    background-color: yellow;
+  }
+}
 </style>
