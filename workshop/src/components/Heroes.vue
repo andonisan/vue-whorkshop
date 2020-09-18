@@ -39,15 +39,21 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { Hero } from '@/models/hero';
 import HeroDetail from '@/components/HeroDetail.vue';
+import { IHeroService, HeroService } from '@/services/HeroService';
 
 @Component({
   components: { HeroDetail },
 })
-
 export default class Heroes extends Vue {
   public heroes: Hero[] = [];
   public selectedHero: Hero = {} as Hero;
   private message = '';
+  private heroService: IHeroService;
+
+  public constructor() {
+    super();
+    this.heroService = new HeroService();
+  }
 
   public created() {
     this.loadHeroes();
@@ -68,29 +74,7 @@ export default class Heroes extends Vue {
     this.selectedHero = hero;
   }
   async getHeroes(): Promise<Hero[]> {
-    const heroes = [
-      {
-        id: 10,
-        firstName: 'Ella',
-        lastName: 'Papa',
-        description: 'fashionista',
-      },
-      {
-        id: 20,
-        firstName: 'Madelyn',
-        lastName: 'Papa',
-        description: 'the cat whisperer',
-      },
-      {
-        id: 30,
-        firstName: 'Haley',
-        lastName: 'Papa',
-        description: 'pen wielder',
-      },
-    ] as Hero[];
-    return new Promise((resolve) => {
-      setTimeout(() => resolve(heroes), 500);
-    });
+    return await this.heroService.getHeroes();
   }
 
   saveHero(hero: Hero) {

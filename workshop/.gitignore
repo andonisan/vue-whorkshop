@@ -21,3 +21,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+mock-server/rest/*/*/*/mock/response.txt
+mock-server/rest/*/*/*/mock/response.txt

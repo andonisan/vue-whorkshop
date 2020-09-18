@@ -42,13 +42,19 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Hero } from '@/models/hero';
+import { IHeroService, HeroService } from '@/services/HeroService';
 
 @Component
 export default class HeroDetails extends Vue {
   @Prop({ required: false, default: false })
   hero!: Hero;
-
+  private heroService: IHeroService;
   private message = '';
+
+  public constructor() {
+    super();
+    this.heroService = new HeroService();
+  }
 
   public get fullName(): string {
     return `${this.hero.firstName} ${this.hero.lastName}`;
@@ -61,7 +67,8 @@ export default class HeroDetails extends Vue {
   cancelHero() {
     this.$emit('cancel');
   }
-  saveHero() {
+  async saveHero() {
+    await this.heroService.updateHero(this.clonedHero);
     this.$emit('save', this.clonedHero);
   }
 }
