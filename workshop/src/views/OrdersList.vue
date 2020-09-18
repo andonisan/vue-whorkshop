@@ -24,7 +24,6 @@
 import { Component, Vue } from 'vue-property-decorator';
 import Order from '@/models/order';
 
-
 @Component
 export default class OrdersList extends Vue {
   private orders: Order[] = [

@@ -167,3 +167,25 @@ button.link {
   border: none;
   cursor: pointer;
 }
+
+table {
+  width: 100%;
+}
+
+tr:nth-child(1) {
+  background-color: grey;
+  color: #fff;
+}
+
+th { 
+  text-align: left;
+}
+
+tr:hover {
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+tr:nth-child(even) {
+  background-color: #efefef;
+}

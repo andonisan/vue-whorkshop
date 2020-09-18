@@ -1,4 +1,4 @@
-export default interface Hero {
+export interface Hero {
     id: number,
     firstName: string,
     lastName: string,
